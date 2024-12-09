@@ -14,5 +14,14 @@ public class HelloServlet extends HttpServlet {
      //   System.out.println("Hello Servlet");
         PrintWriter out = resp.getWriter();
         out.println("Hello World from HelloServlet");
+//        out.println("<h1 style=\"color:red\">Hello World from HelloServlet</h1>");
+//        String servletPath = req.getServletPath();
+//        out.println("Servlet path: " + servletPath);
+//        String method = req.getMethod();
+//        out.println("Method: " + method);
+//        String pathInfo = req.getPathInfo();
+//        out.println("PathInfo: " + pathInfo);
+//        String contextPath = req.getContextPath();
+//        out.println("ContextPath: " + contextPath);
     }
 }
