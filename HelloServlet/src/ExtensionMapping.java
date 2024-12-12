@@ -6,12 +6,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
-@WebServlet(urlPatterns = "/hello")
-public class MyServlet extends HttpServlet {
+@WebServlet(urlPatterns = "*.txt") //*.js //*.png
+public class ExtensionMapping extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter out = resp.getWriter();
-        out.println("Hello World from MyServlet");
+        out.println("Extension Mapping");
     }
 }

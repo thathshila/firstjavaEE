@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p id="para">This is example web project for Ajax</p>
+<button id="ajax-button1">Send a request</button>
+<script src="assests/js/jquery-3.7.1.min.js"></script>
+<!--<table>-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th id="email">email</th>-->
+<!--        <th id="id">id</th>-->
+<!--        <th id="name">name</th>-->
+<!--        <th id="body">body</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody id="table-body">-->
+
+<!--    </tbody>-->
+<!--</table>-->
+<script>
+     $('#ajax-button1').click(function (){
+         console.log("Request started");
+         $.ajax({
+             url:'http://localhost:8080/HelloServlet_Web_exploded/hello',
+             method:'GET',
+             async:true,
+                success:function (response){
+                     // $('#para').text(response);
+                     // for (var x = 0; x< response.length; x++){
+                     //     let data= `<tr><td>${response[x].email}</td><td>${response[x].id}</td><td>${response[x].name}</td>${response[x].body}<td</tr>`
+                     //    $("#table-body").append(data);
+                     // }
+                     console.log(response)
+                },
+                error:function (error){
+                    console.log(error);
+                }
+         })
+            console.log("end");
+     });
+</script>
+<!--<script>-->
+<!--    $('#ajax-button1').click(function (){-->
+<!--        console.log("Request started")-->
+<!--            var http = new XMLHttpRequest();-->
+<!--            http.open('GET','db/db.txt',false);-->
+<!--            http.send();-->
+<!--            http.onreadystatechange=function (){-->
+<!--                if (http.status== 200 && http.readyState ==4) {-->
+<!--                    $('#para').text(http.responseText);-->
+<!--                }-->
+<!--            }-->
+<!--            console.log("Request Finished");-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>
