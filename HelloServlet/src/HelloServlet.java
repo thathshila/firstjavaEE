@@ -26,8 +26,6 @@ public class HelloServlet extends HttpServlet {
         String pathInfo = req.getPathInfo();
         String remoteUser = req.getRemoteUser();
 
-
-
         System.out.println("servlet path    "+servletPath);
         System.out.println("requestURI      "+requestURI);
         System.out.println("contextPath     "+contextPath);
