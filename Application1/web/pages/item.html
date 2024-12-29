@@ -3,9 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <title>item</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<div class="card backgroundCover" id="item_content">
 
-<h1>ITEM</h1>
+    <div class="card-body">
+
+        <h4 class="text-center heading">Manage Items</h4>
+
+        <div class="container_fluid">
+
+            <div class="row row-cols-1 row-cols-md-3 g-4 card_cover">
+                <div class="col">
+
+                    <!-- Item Form -->
+
+                    <div class="card forms">
+                        <div class="card-body details">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="item_id" class="form-label">Item ID</label>
+                                    <input type="text" class="form-control" id="item_id" aria-describedby="emailHelp">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="item_name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="item_name">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input type="text" class="form-control" id="quantity">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">Price</label>
+                                    <input type="text" class="form-control" id="price">
+                                </div>
+                                <button type="button" class="btn btn-success" id="itemSaveBtn">Save</button>
+                                <!--                                <button type="button" class="btn btn-success" id="cusUpdateBtn">Update</button>-->
+                                <!--                                <button type="button" class="btn btn-success" id="cusDeleteBtn">Delete</button>-->
+                                <button type="button" class="btn btn-success" id="itemClearBtn">Clear</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <!-- Search Form -->
+
+                    <div class="card" id="item_table">
+                        <div class="card-body">
+
+                            <div class="row" >
+                                <div class="col-6 col-md-4 searchForm">
+                                    <input type="text" class="form-control" id="item_search" aria-describedby="idHelp" placeholder="Item Name">
+                                    <button type="button" class="btn btn-warning" id="itemSearchBtn">Search</button>
+                                </div>
+                            </div>
+
+                            <br>
+                            <div class="table-responsive">
+
+                                <!-- Customer table -->
+
+                                <table class="table table-bordered tableSection table-secondary">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Item ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="itemTableBody">
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Modal -->
+<div class="modal fade" id="update_modal" tabindex="-1" aria-labelledby="update_modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="container m-2">
+                    <form>
+                        <div class="mb-3">
+                            <label for="update_item_id" class="form-label">Item Id</label>
+                            <input type="text" class="form-control" id="update_item_id" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="update_item_name" class="form-label">Item name</label>
+                            <input type="text" class="form-control" id="update_item_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="update_quantity" class="form-label">Quantity</label>
+                            <input type="text" class="form-control" id="update_quantity">
+                        </div>
+                        <div class="mb-3">
+                            <label for="update_price" class="form-label">Price</label>
+                            <input type="text" class="form-control" id="update_price">
+                        </div>
+                        <button id="btn_update_item" type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="../js/jquery-3.7.1.min.js"></script>
+<script>
+    const fetchItemData = () =>{
+        $.ajax({
+            url:"http://localhost:8080/Application1_Web_exploded/item",
+            type:"GET",
+            success:(res) =>{
+                const tableBody = $('#itemTableBody');
+                tableBody.empty();
+                res.forEach(item =>{
+                    tableBody.append(
+                        `
+                        <tr>
+                            <td>${item.code}</td>
+                            <td>${item.name}</td>
+                            <td>${item.price}</td>
+                            <td>${item.qty}</td>
+                             <td>
+          <button class="btn btn-warning btn-sm"
+             onclick="editItem('${item.code}', '${item.name}', '${item.price}', '${item.qty}')">Edit</button>
+            <button class="btn btn-danger btn-sm"
+            onclick="deleteItem('${item.code}')">Delete</button>
+        </td>
+                        </tr>
+                        `
+                    )
+                })
+            },
+            error:(err) =>{
+                console.log(err);
+            }
+        })
+    }
+    fetchItemData();
+
+    $('#itemSaveBtn').click((e) =>{
+        e.preventDefault()
+
+        const item_code = $('#item_id').val();
+        const item_name = $('#item_name').val();
+        const item_price = $('#price').val();
+        const item_qty = $('#quantity').val();
+
+        $.ajax({
+            url: "http://localhost:8080/Application1_Web_exploded/item",
+            type: "POST",
+            data:{
+                code:item_code,
+                name:item_name,
+                price:item_price,
+                qty:item_qty
+            },
+            success:() => {
+                fetchItemData()
+            },
+            error:(err) => {
+                console.log(err);
+            }
+        })
+    })
+
+    const editItem = (code,name,price,qty) => {
+        $('#update_item_id').val(code)
+        $('#update_item_name').val(name)
+        $('#update_price').val(price)
+        $('#update_quantity').val(qty)
+        $('#update_modal').modal('show')
+    }
+
+    $('#btn_update_item').click((e) => {
+        e.preventDefault();
+
+        const item_code = $('#update_item_id').val();
+        const item_name = $('#update_item_name').val();
+        const item_price = $('#update_price').val();
+        const item_qty = $('#update_quantity').val();
+
+        $.ajax({
+            url: `http://localhost:8080/Application1_Web_exploded/item`,
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify({
+                code: item_code,
+                name: item_name,
+                price: parseFloat(item_price),
+                qty: parseInt(item_qty)
+            }),
+            success: () => {
+                fetchItemData();
+                $('#update_modal').modal('hide');
+            },
+            error: (err) => {
+                console.error("Error updating item:", err);
+            }
+        });
+    });
+
+    const deleteItem = (code) => {
+        if (confirm("Are you sure you want to delete this item?")) {
+            $.ajax({
+                url: `http://localhost:8080/Application1_Web_exploded/item?code=${code}`,
+                type: "DELETE",
+                success: () => {
+                    fetchItemData();
+                    alert("Item deleted successfully!");
+                },
+                error: (err) => {
+                    console.error(err);
+                    alert("Failed to delete item.");
+                }
+            });
+        }
+    }
+</script>
 </body>
 </html>

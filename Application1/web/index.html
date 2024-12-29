@@ -46,8 +46,8 @@
                                     <input type="text" class="form-control" id="contact">
                                 </div>
                                 <button type="button" class="btn btn-success" id="cusSaveBtn">Save</button>
-                                <button type="button" class="btn btn-success" id="cusUpdateBtn">Update</button>
-                                <button type="button" class="btn btn-success" id="cusDeleteBtn">Delete</button>
+<!--                                <button type="button" class="btn btn-success" id="cusUpdateBtn">Update</button>-->
+<!--                                <button type="button" class="btn btn-success" id="cusDeleteBtn">Delete</button>-->
                                 <button type="button" class="btn btn-success" id="cusClearBtn">Clear</button>
                             </form>
                         </div>
@@ -80,6 +80,7 @@
                                         <th scope="col">Address</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Contact No</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                     </thead>
                                     <tbody id="customerTableBody">
@@ -93,9 +94,44 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
+
+<!-- Update Modal -->
+<div class="modal fade" id="update_modal" tabindex="-1" aria-labelledby="update_modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="container m-2">
+                    <form>
+                        <div class="mb-3">
+                            <label for="update_customer_id" class="form-label">Customer Id</label>
+                            <input type="text" class="form-control" id="update_customer_id" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="update_customer_name" class="form-label">Customer name</label>
+                            <input type="text" class="form-control" id="update_customer_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="update_customer_address" class="form-label">Customer address</label>
+                            <input type="text" class="form-control" id="update_customer_address">
+                        </div>
+                        <div class="mb-3">
+                            <label for="update_customer_email" class="form-label">Customer email</label>
+                            <input type="text" class="form-control" id="update_customer_email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="update_customer_tel" class="form-label">Customer contact</label>
+                            <input type="text" class="form-control" id="update_customer_tel">
+                        </div>
+                        <button id="btn_update_customer" type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="js/jquery-3.7.1.min.js"></script>
@@ -112,9 +148,15 @@
             <tr>
             <td>${customer.id}</td>
             <td>${customer.name}</td>
-            <td>${customer.email}</td>
             <td>${customer.address}</td>
+             <td>${customer.email}</td>
             <td>${customer.tel}</td>
+              <td>
+          <button class="btn btn-warning btn-sm"
+             onclick="editCustomer('${customer.id}', '${customer.name}', '${customer.address}', '${customer.email}', '${customer.tel}')"> Edit</button>
+            <button class="btn btn-danger btn-sm"
+            onclick="deleteCustomer('${customer.id}')">Delete</button>
+        </td>
         </tr>
             `)
                 })
@@ -124,7 +166,9 @@
             }
         })
     }
-fetchCustomerData()
+
+    fetchCustomerData()
+
     $('#cusSaveBtn').click((e) => {
         e.preventDefault()
 
@@ -153,6 +197,92 @@ fetchCustomerData()
         })
 
     })
+
+    const editCustomer = (cid, name,address,email,tel) => {
+        $('#update_customer_id').val(cid)
+        $('#update_customer_name').val(name)
+        $('#update_customer_address').val(address)
+        $('#update_customer_email').val(email)
+        $('#update_customer_tel').val(tel)
+        $('#update_modal').modal('show')
+    }
+
+    // $('#btn_update_customer').click((e) =>{
+    //     e.preventDefault()
+    //
+    //     const customerId = $('#update_customer_id').val()
+    //     const customerName = $('#update_customer_name').val()
+    //     const customerAddress = $('#update_customer_address').val()
+    //     const customerEmail = $('#update_customer_email').val()
+    //     const customerTel = $('#update_customer_tel').val()
+    //
+    //     const customerData = {
+    //         name: customerName,
+    //         address: customerAddress,
+    //         email: customerEmail,
+    //         tel: customerTel
+    //     }
+    //
+    //     $.ajax({
+    //         url: `http://localhost:8080/Application1_Web_exploded/customer/${customerId}`,
+    //         type: "PUT",
+    //         data: customerData,
+    //         success: () => {
+    //             fetchCustomerData();
+    //             $('#update_modal').modal('hide')
+    //         },
+    //         error: (err) => {
+    //             console.log(err);
+    //         }
+    //     })
+    // })
+
+    $('#btn_update_customer').click((e) => {
+        e.preventDefault();
+
+        const customerId = $('#update_customer_id').val();
+        const customerName = $('#update_customer_name').val();
+        const customerAddress = $('#update_customer_address').val();
+        const customerEmail = $('#update_customer_email').val();
+        const customerTel = $('#update_customer_tel').val();
+
+        $.ajax({
+            url: "http://localhost:8080/Application1_Web_exploded/customer",
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify({
+                id: customerId,
+                name: customerName,
+                address: customerAddress,
+                email: customerEmail,
+                tel: customerTel
+            }),
+            success: () => {
+                fetchCustomerData();
+                $('#update_modal').modal('hide');
+            },
+            error: (err) => {
+                console.log(err);
+            }
+        });
+    });
+
+    const deleteCustomer = (customerId) => {
+        if (confirm("Are you sure you want to delete this customer?")) {
+            $.ajax({
+                url: `http://localhost:8080/Application1_Web_exploded/customer?id=${customerId}`,
+                type: "DELETE",
+                success: () => {
+                    fetchCustomerData();
+                    alert("Customer deleted successfully!");
+                },
+                error: (err) => {
+                    console.error(err);
+                    alert("Failed to delete customer.");
+                }
+            });
+        }
+    };
 
 </script>
 </body>
