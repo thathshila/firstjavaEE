@@ -146,6 +146,7 @@
                         </tr>
                         `
                     )
+                    bindClickEvents();
                 })
             },
             error:(err) =>{
@@ -217,6 +218,21 @@
         });
     });
 
+    function bindClickEvents(){
+        $("#itemTableBody>tr").click(function (){
+        const code = $(this).children().eq(0).text();
+        const name = $(this).children().eq(1).text();
+        const price = $(this).children().eq(2).text();
+        const qty = $(this).children().eq(3).text();
+
+        $("#item_id").val(code);
+        $("#item_name").val(name);
+        $("#price").val(price);
+        $("#quantity").val(qty);
+
+        })
+    }
+
     const deleteItem = (code) => {
         if (confirm("Are you sure you want to delete this item?")) {
             $.ajax({
@@ -233,6 +249,8 @@
             });
         }
     }
+
+
 </script>
 </body>
 </html>
