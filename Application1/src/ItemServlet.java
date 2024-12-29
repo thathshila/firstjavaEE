@@ -84,13 +84,9 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            // Load the MySQL driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // Establish the database connection
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
 
-            // Read and parse JSON payload from the request body
             BufferedReader reader = req.getReader();
             StringBuilder jsonBuilder = new StringBuilder();
             String line;
@@ -98,17 +94,14 @@ public class ItemServlet extends HttpServlet {
                 jsonBuilder.append(line);
             }
 
-            // Convert JSON string to JsonObject
             String json = jsonBuilder.toString();
             JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
 
-            // Extract values from JsonObject
             String code = jsonObject.getString("code");
             String name = jsonObject.getString("name");
             double price = jsonObject.getJsonNumber("price").doubleValue();
             int qty = jsonObject.getInt("qty");
 
-            // Prepare the SQL query for updating the item
             String query = "UPDATE item SET name = ?, price = ?, qty = ? WHERE code = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, name);
@@ -116,10 +109,8 @@ public class ItemServlet extends HttpServlet {
             preparedStatement.setInt(3, qty);
             preparedStatement.setString(4, code);
 
-            // Execute the update
             int rowsAffected = preparedStatement.executeUpdate();
 
-            // Send appropriate response
             if (rowsAffected > 0) {
                 resp.setContentType("application/json");
                 resp.getWriter().write("{\"status\":\"success\"}");
@@ -127,7 +118,6 @@ public class ItemServlet extends HttpServlet {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to update the item.");
             }
 
-            // Close resources
             preparedStatement.close();
             connection.close();
         } catch (SQLException e) {
