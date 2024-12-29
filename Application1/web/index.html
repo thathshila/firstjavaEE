@@ -48,7 +48,7 @@
                                 <button type="button" class="btn btn-success" id="cusSaveBtn">Save</button>
 <!--                                <button type="button" class="btn btn-success" id="cusUpdateBtn">Update</button>-->
 <!--                                <button type="button" class="btn btn-success" id="cusDeleteBtn">Delete</button>-->
-                                <button type="button" class="btn btn-success" id="cusClearBtn">Clear</button>
+                                <button type="button" class="btn btn-success" id="cusClearBtn" onclick="clearForm()">Clear</button>
                             </form>
                         </div>
                     </div>
@@ -283,6 +283,14 @@
             });
         }
     };
+
+    function clearForm(){
+        $('#customer_id').val("");
+        $('#customer_name').val("");
+        $('#address').val("");
+        $('#email').val("");
+        $('#contact').val("");
+    }
 
 </script>
 </body>
