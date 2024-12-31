@@ -15,34 +15,34 @@ import java.sql.*;
 
 @WebServlet(urlPatterns = "/item")
 public class ItemServlet extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
-            ResultSet resultSet = connection.prepareStatement("Select * from item").executeQuery();
-
-            JsonArrayBuilder allItems = Json.createArrayBuilder();
-            while (resultSet.next()) {
-                String code = resultSet.getString("code");
-                String name = resultSet.getString("name");
-                double price = resultSet.getDouble("price");
-                int qty = resultSet.getInt("qty");
-                JsonObjectBuilder item = Json.createObjectBuilder();
-                item.add("code", code);
-                item.add("name", name);
-                item.add("price", price);
-                item.add("qty", qty);
-                allItems.add(item);
-            }
-            resp.setContentType("application/json");
-            resp.getWriter().write(allItems.build().toString());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @Override
+//    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        try {
+//            Class.forName("com.mysql.jdbc.Driver");
+//            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
+//            ResultSet resultSet = connection.prepareStatement("Select * from item").executeQuery();
+//
+//            JsonArrayBuilder allItems = Json.createArrayBuilder();
+//            while (resultSet.next()) {
+//                String code = resultSet.getString("code");
+//                String name = resultSet.getString("name");
+//                double price = resultSet.getDouble("price");
+//                int qty = resultSet.getInt("qty");
+//                JsonObjectBuilder item = Json.createObjectBuilder();
+//                item.add("code", code);
+//                item.add("name", name);
+//                item.add("price", price);
+//                item.add("qty", qty);
+//                allItems.add(item);
+//            }
+//            resp.setContentType("application/json");
+//            resp.getWriter().write(allItems.build().toString());
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -159,4 +159,71 @@ public class ItemServlet extends HttpServlet {
             resp.getWriter().write("{\"error\": \"An internal error occurred.\"}");
         }
     }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
+
+            String nameOnly = req.getParameter("nameOnly");
+            String itemName = req.getParameter("name");
+
+            String query;
+            PreparedStatement preparedStatement;
+
+            if (nameOnly != null && nameOnly.equals("true")) {
+                query = "SELECT name FROM item";
+                preparedStatement = connection.prepareStatement(query);
+            } else if (itemName != null) {
+                query = "SELECT name, price, qty FROM item WHERE name = ?";
+                preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setString(1, itemName);
+            } else {
+                query = "SELECT * FROM item";
+                preparedStatement = connection.prepareStatement(query);
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resp.setContentType("application/json");
+
+            if (nameOnly != null && nameOnly.equals("true")) {
+                JsonArrayBuilder nameArray = Json.createArrayBuilder();
+                while (resultSet.next()) {
+                    nameArray.add(resultSet.getString("name"));
+                }
+                resp.getWriter().write(nameArray.build().toString());
+            } else if (itemName != null) {
+                JsonObjectBuilder itemDetails = Json.createObjectBuilder();
+                if (resultSet.next()) {
+                    itemDetails.add("name", resultSet.getString("name"));
+                    itemDetails.add("price", resultSet.getDouble("price"));
+                    itemDetails.add("qty", resultSet.getInt("qty"));
+                } else {
+                    itemDetails.add("error", "Item not found");
+                }
+                resp.getWriter().write(itemDetails.build().toString());
+            } else {
+                JsonArrayBuilder allItems = Json.createArrayBuilder();
+                while (resultSet.next()) {
+                    JsonObjectBuilder item = Json.createObjectBuilder();
+                    item.add("code", resultSet.getString("code"));
+                    item.add("name", resultSet.getString("name"));
+                    item.add("price", resultSet.getDouble("price"));
+                    item.add("qty", resultSet.getInt("qty"));
+                    allItems.add(item);
+                }
+                resp.getWriter().write(allItems.build().toString());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write("{\"error\": \"Database error occurred.\"}");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write("{\"error\": \"Driver error occurred.\"}");
+        }
+    }
+
 }
