@@ -47,9 +47,9 @@
             <!-- Customer NIC and Name -->
             <div class="form-row mb-4">
                 <div class="col">
-                    <label for="customerTel">Customer Tel</label>
-                    <select class="form-control" id="customerTel">
-                        <option value="" disabled selected>Select Tel</option>
+                    <label for="customerTelDropdown">Customer Tel</label>
+                    <select class="form-control" id="customerTelDropdown">
+                        <option value="" disabled selected>Select Customer Tel</option>
                     </select>
                 </div>
                 <div class="col">
@@ -61,8 +61,8 @@
             <!-- Item Information -->
             <div class="form-row mb-4">
                 <div class="col">
-                    <label for="itemName">Item Name</label>
-                    <select class="form-control" id="itemName">
+                    <label for="itemNameDropdown">Item Name</label>
+                    <select class="form-control" id="itemNameDropdown">
                         <option value="" disabled selected>Select Item</option>
                     </select>
                 </div>
@@ -113,5 +113,255 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="../js/jquery-3.7.1.min.js"></script>
+<script>
+
+    const loadCustomerTelDropdown = () => {
+        $.ajax({
+            url: "http://localhost:8080/Application1_Web_exploded/customer?telOnly=true",
+            type: "GET",
+            success: (telNumbers) => {
+                const dropdown = $('#customerTelDropdown');
+                dropdown.empty();
+                dropdown.append('<option value="" disabled selected>Select Customer Tel</option>');
+
+                telNumbers.forEach(tel => {
+                    dropdown.append(`<option value="${tel}">${tel}</option>`);
+                });
+            },
+            error: (err) => {
+                console.error("Error fetching customer telephone numbers:", err);
+            }
+        });
+    };
+
+    const handleCustomerTelSelection = () => {
+        $('#customerTelDropdown').change(function () {
+            const selectedTel = $(this).val();
+
+            if (!selectedTel) {
+                $('#customerId').val('');
+                return;
+            }
+            $.ajax({
+                url: `http://localhost:8080/Application1_Web_exploded/customer?tel=${selectedTel}`,
+                type: "GET",
+                success: (customer) => {
+                    if (customer && customer.id) {
+                        $('#customerId').val(customer.id);
+                    } else {
+                        $('#customerId').val('');
+                    }
+                },
+                error: (err) => {
+                    console.error("Error fetching customer details:", err);
+                }
+            });
+        });
+    };
+
+        loadCustomerTelDropdown();
+
+        $('#placeOrderForm').on('show', () => {
+            loadCustomerTelDropdown();
+        });
+
+        handleCustomerTelSelection();
+
+    const loadItemNameDropdown = () => {
+        $.ajax({
+            url: "http://localhost:8080/Application1_Web_exploded/item?nameOnly=true",
+            type: "GET",
+            success: (itemNames) => {
+                const dropdown = $('#itemNameDropdown');
+                dropdown.empty();
+                dropdown.append('<option value="" disabled selected>Select Item Name</option>');
+
+                itemNames.forEach(name => {
+                    dropdown.append(`<option value="${name}">${name}</option>`);
+                });
+            },
+            error: (err) => {
+                console.error("Error fetching item names:", err);
+            }
+        });
+    };
+
+    const handleItemNameSelection = () => {
+        $('#itemNameDropdown').change(function () {
+            const selectedName = $(this).val();
+
+            if (!selectedName) {
+                $('#unitPrice').val('');
+                $('#availableQuantity').val('');
+                return;
+            }
+
+            $.ajax({
+                url: `http://localhost:8080/Application1_Web_exploded/item?name=${selectedName}`,
+                type: "GET",
+                success: (item) => {
+                    if (item && item.price && item.qty) {
+                        $('#unitPrice').val(item.price);
+                        $('#availableQuantity').val(item.qty);
+                    } else {
+                        $('#unitPrice').val('');
+                        $('#availableQuantity').val('');
+                    }
+                },
+                error: (err) => {
+                    console.error("Error fetching item details:", err);
+                }
+            });
+        });
+    };
+
+    loadItemNameDropdown();
+
+    handleItemNameSelection();
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const orderDateInput = document.getElementById("orderDate");
+        const currentDate = new Date();
+
+        const formattedDate = currentDate.toISOString().split("T")[0];
+
+        orderDateInput.value = formattedDate;
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const orderIdInput = document.getElementById("orderId");
+
+        fetch("http://localhost:8080/Application1_Web_exploded/placeOrder")
+            .then((response) => response.json())
+            .then((data) => {
+                const latestOrderId = data.latestOrderId;
+                const newOrderId = generateNextOrderId(latestOrderId);
+                orderIdInput.value = newOrderId;
+            })
+            .catch((error) => {
+                console.error("Error fetching latest order ID:", error);
+                orderIdInput.value = "OID-1001";
+            });
+    });
+
+    function generateNextOrderId(latestOrderId) {
+        if (!latestOrderId) {
+            return "OID-1001";
+        }
+        const prefix = "OID-";
+        const lastNumber = parseInt(latestOrderId.replace(prefix, ""), 10);
+        return `${prefix}${lastNumber + 1}`;
+    }
+
+    function addToCart() {
+        const itemName = $('#itemNameDropdown').val();
+        const unitPrice = parseFloat($('#unitPrice').val());
+        const availableQuantity = parseInt($('#availableQuantity').val(), 10);
+        const quantity = parseInt($('#quantity').val(), 10);
+
+        if (!itemName || isNaN(unitPrice) || isNaN(quantity) || quantity <= 0) {
+            alert("Please select a valid item and enter a valid quantity.");
+            return;
+        }
+
+        if (quantity > availableQuantity) {
+            alert("Quantity exceeds available stock.");
+            return;
+        }
+
+        const total = unitPrice * quantity;
+        const cartTableBody = $('#cartTableBody');
+        const rowHtml = `
+        <tr>
+            <td>${itemName}</td>
+            <td>${quantity}</td>
+            <td>${unitPrice.toFixed(2)}</td>
+            <td>${total.toFixed(2)}</td>
+        </tr>
+    `;
+        cartTableBody.append(rowHtml);
+
+        updateNetBalance(total);
+
+        $('#quantity').val('');
+    }
+
+    function updateNetBalance(amountToAdd) {
+        const netBalanceElement = $('#netBalance');
+        const currentBalance = parseFloat(netBalanceElement.text().replace('$', '')) || 0;
+        const newBalance = currentBalance + amountToAdd;
+        netBalanceElement.text(`$${newBalance.toFixed(2)}`);
+    }
+
+    function clearForm() {
+        $('#orderId').val('');
+        const currentDate = new Date();
+        $('#orderDate').val(currentDate.toISOString().split("T")[0]);
+        $('#customerTelDropdown').val('');
+        $('#customerId').val('');
+        $('#itemNameDropdown').val('');
+        $('#unitPrice').val('');
+        $('#availableQuantity').val('');
+        $('#quantity').val('');
+    }
+
+    function placeOrder() {
+        const customerId = $('#customerId').val();
+        const customerTel = $('#customerTelDropdown').val();
+        const orderId = $('#orderId').val();
+        const orderDate = $('#orderDate').val();
+
+        const cartItems = [];
+        $('#cartTableBody tr').each(function () {
+            const itemName = $(this).find('.item-name').text();
+            const quantity = $(this).find('.quantity').text();
+            const unitPrice = $(this).find('.unit-price').text();
+            const total = $(this).find('.total-price').text();
+
+            cartItems.push({
+                itemName: itemName,
+                quantity: parseInt(quantity, 10),
+                unitPrice: parseFloat(unitPrice),
+                total: parseFloat(total),
+            });
+        });
+
+        const totalPrice = cartItems.reduce((sum, item) => sum + item.total, 0);
+
+        if (!customerId || !customerTel || cartItems.length === 0) {
+            alert("Please fill in all required fields and add at least one item to the cart.");
+            return;
+        }
+
+        const orderData = {
+            orderId: orderId,
+            orderDate: orderDate,
+            customerId: customerId,
+            customerTel: customerTel,
+            cartItems: cartItems,
+            totalPrice: totalPrice,
+        };
+
+        $.ajax({
+            url: "http://localhost:8080/Application1_Web_exploded/placeOrder",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(orderData),
+            success: (response) => {
+                alert("Order placed successfully!");
+                clearForm();
+                $('#cartTableBody').empty();
+                $('#netBalance').text('$0.00');
+            },
+            error: (err) => {
+                console.error("Error placing the order:", err);
+                alert("Failed to place the order. Please try again.");
+            },
+        });
+    }
+
+
+
+</script>
 </body>
 </html>

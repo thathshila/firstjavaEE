@@ -273,6 +273,9 @@ public class CustomerServlet extends HttpServlet {
                     allCustomers.add(customer);
                 }
                 resp.getWriter().write(allCustomers.build().toString());
+                resp.setStatus(HttpServletResponse.SC_OK);
+               // resp.sendError(400,"not found");
+                resp.addHeader("IP-Address", "123.123.4.12");
             }
 
         } catch (ClassNotFoundException | SQLException e) {
