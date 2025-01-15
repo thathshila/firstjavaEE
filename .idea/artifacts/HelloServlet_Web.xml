@@ -3,6 +3,13 @@
     <output-path>$PROJECT_DIR$/out/artifacts/HelloServlet_Web</output-path>
     <root id="archive" name="HelloServlet_Web.war">
       <element id="artifact" artifact-name="HelloServlet:Web exploded" />
+      <element id="javaee-facet-resources" facet="Application2/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Application2" />
+        </element>
+        <element id="directory" name="lib" />
+      </element>
     </root>
   </artifact>
 </component>

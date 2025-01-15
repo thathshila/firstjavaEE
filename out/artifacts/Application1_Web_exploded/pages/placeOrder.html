@@ -305,6 +305,61 @@
         $('#quantity').val('');
     }
 
+    // function placeOrder() {
+    //     const customerId = $('#customerId').val();
+    //     const customerTel = $('#customerTelDropdown').val();
+    //     const orderId = $('#orderId').val();
+    //     const orderDate = $('#orderDate').val();
+    //
+    //     const cartItems = [];
+    //     $('#cartTableBody tr').each(function () {
+    //         const itemName = $(this).find('.item-name').text();
+    //         const quantity = $(this).find('.quantity').text();
+    //         const unitPrice = $(this).find('.unit-price').text();
+    //         const total = $(this).find('.total-price').text();
+    //
+    //         cartItems.push({
+    //             itemName: itemName,
+    //             quantity: parseInt(quantity, 10),
+    //             unitPrice: parseFloat(unitPrice),
+    //             total: parseFloat(total),
+    //         });
+    //     });
+    //
+    //     const totalPrice = cartItems.reduce((sum, item) => sum + item.total, 0);
+    //
+    //     if (!customerId || !customerTel || cartItems.length === 0) {
+    //         alert("Please fill in all required fields and add at least one item to the cart.");
+    //         return;
+    //     }
+    //
+    //     const orderData = {
+    //         orderId: orderId,
+    //         orderDate: orderDate,
+    //         customerId: customerId,
+    //         customerTel: customerTel,
+    //         cartItems: cartItems,
+    //         totalPrice: totalPrice,
+    //     };
+    //
+    //     $.ajax({
+    //         url: "http://localhost:8080/Application1_Web_exploded/placeOrder",
+    //         type: "POST",
+    //         contentType: "application/json",
+    //         data: JSON.stringify(orderData),
+    //         success: (response) => {
+    //             alert("Order placed successfully!");
+    //             clearForm();
+    //             $('#cartTableBody').empty();
+    //             $('#netBalance').text('$0.00');
+    //         },
+    //         error: (err) => {
+    //             console.error("Error placing the order:", err);
+    //             alert("Failed to place the order. Please try again.");
+    //         },
+    //     });
+    // }
+    //
     function placeOrder() {
         const customerId = $('#customerId').val();
         const customerTel = $('#customerTelDropdown').val();
@@ -313,10 +368,10 @@
 
         const cartItems = [];
         $('#cartTableBody tr').each(function () {
-            const itemName = $(this).find('.item-name').text();
-            const quantity = $(this).find('.quantity').text();
-            const unitPrice = $(this).find('.unit-price').text();
-            const total = $(this).find('.total-price').text();
+            const itemName = $(this).find('td:nth-child(1)').text();
+            const quantity = $(this).find('td:nth-child(2)').text();
+            const unitPrice = $(this).find('td:nth-child(3)').text();
+            const total = $(this).find('td:nth-child(4)').text();
 
             cartItems.push({
                 itemName: itemName,
@@ -359,7 +414,6 @@
             },
         });
     }
-
 
 
 </script>

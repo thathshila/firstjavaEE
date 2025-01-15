@@ -6,7 +6,6 @@
         <descriptors>
           <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/web/web/WEB-INF/web.xml" />
           <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/web/WEB-INF/web.xml" />
-          <deploymentDescriptor name="context.xml" url="file://$MODULE_DIR$/web/META-INF/context.xml" />
         </descriptors>
         <webroots>
           <root url="file://$MODULE_DIR$/web" relative="/" />
@@ -22,10 +21,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 10.1.33" level="application_server_libraries" />
-    <orderEntry type="library" name="mysql-connector-j-8.3.0" level="project" />
-    <orderEntry type="library" name="javax.json-1.1.4" level="project" />
     <orderEntry type="library" name="jakarta.annotation-api-3.0.0" level="project" />
     <orderEntry type="library" name="jakarta.annotation-api-3.0.01" level="project" />
-    <orderEntry type="library" name="dbcp" level="project" />
+    <orderEntry type="library" name="javax.json-1.1.4" level="project" />
+    <orderEntry type="library" name="mysql-connector-j-8.3.0" level="project" />
+    <orderEntry type="library" name="jakarta.annotation-api-3.0.02" level="project" />
   </component>
 </module>

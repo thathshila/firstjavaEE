@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jakarta.annotation-api-3.0.02">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jakarta.annotation-api-3.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.json-1.1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mysql-connector-j-8.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Application1/Application1.iml" filepath="$PROJECT_DIR$/Application1/Application1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Application2/Application2.iml" filepath="$PROJECT_DIR$/Application2/Application2.iml" />
       <module fileurl="file://$PROJECT_DIR$/HelloServlet/HelloServlet.iml" filepath="$PROJECT_DIR$/HelloServlet/HelloServlet.iml" />
       <module fileurl="file://$PROJECT_DIR$/New_mod/New_mod.iml" filepath="$PROJECT_DIR$/New_mod/New_mod.iml" />
       <module fileurl="file://$PROJECT_DIR$/firstjavaEE.iml" filepath="$PROJECT_DIR$/firstjavaEE.iml" />

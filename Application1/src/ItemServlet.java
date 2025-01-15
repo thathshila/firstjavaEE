@@ -213,6 +213,7 @@ public class ItemServlet extends HttpServlet {
                     item.add("qty", resultSet.getInt("qty"));
                     allItems.add(item);
                 }
+
                 resp.getWriter().write(allItems.build().toString());
             }
         } catch (SQLException e) {
